@@ -49,7 +49,7 @@ public class UserController {
         userService.delete(userId);
     }
 
-    private void printServerResponse ( UserResponseDto result){
+    private void printServerResponse(UserResponseDto result) {
         log.info("Ответ ({}): сервера", result);
     }
 }

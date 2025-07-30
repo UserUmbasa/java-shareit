@@ -74,7 +74,7 @@ public class ItemController {
         itemService.deleteItem(userId, itemId);
     }
 
-    private void printServerResponse ( ItemResponseDto result){
+    private void printServerResponse(ItemResponseDto result) {
         log.info("Ответ ({}): сервера", result);
     }
 
