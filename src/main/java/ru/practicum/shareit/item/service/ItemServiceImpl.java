@@ -25,7 +25,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemResponseDto addItem(String userId, ItemRequestDto item) {
-        log.error("Получен запрос на добавление вещи {} - пользователя {}", item, userId);
         try {
             if (!userService.isUserRegistered(Long.parseLong(userId))) {
                 throw new NotFoundException("такого пользователя нет");
@@ -39,7 +38,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemResponseDto updateItem(String userId, Long itemId, ItemRequestDto item) {
-        log.error("Получен запрос на обновление вещи {} пользователя {}", itemId, userId);
         try {
             if (!userService.isUserRegistered(Long.parseLong(userId))) {
                 throw new NotFoundException("такого пользователя нет");
@@ -64,7 +62,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemResponseDto> findItemsUser(String userId) {
-        log.info("Получен запрос на получение всех вещей пользователя {}", userId);
         try {
             if (!userService.isUserRegistered(Long.parseLong(userId))) {
                 throw new NotFoundException("такого пользователя нет");
@@ -78,11 +75,10 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemResponseDto findItemId(String userId, Long itemId) {
-        log.info("Получен запрос на получение вещи itemId:{} userId:{} ", itemId, userId);
         try {
             // смысл юзера пока не раскрыт (нет никакого ограничения)
             if (!userService.isUserRegistered(Long.parseLong(userId))) {
-                throw new NotFoundException("данные не найдены");
+                throw new NotFoundException("такого пользователя нет");
             }
             Item result = itemRepository.getItemId(itemId).orElseThrow(() -> new NotFoundException("такой айди нет"));
             return itemMapper.mapToItemResponseDto(result);
@@ -93,7 +89,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemResponseDto> findSearchItems(String userId, String text) {
-        log.info("Получен запрос на получение вещей пользователя {} подзапрос: {}", userId, text);
         try {
             List<ItemResponseDto> result = itemRepository.getItemsUser(Long.parseLong(userId)).stream()
                     .filter(item -> Boolean.TRUE.equals(item.getAvailable())).map(itemMapper::mapToItemResponseDto).toList();
