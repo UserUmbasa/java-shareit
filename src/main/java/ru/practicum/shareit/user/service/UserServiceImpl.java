@@ -21,7 +21,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDto addUser(UserRequestDto user) {
-        log.info("Получен запрос на добавление пользователя {}",user);
+        log.info("Получен запрос на добавление пользователя {}", user);
         if (isUserRegisteredEmail(user.getEmail())) {
             return userMapper.mapToUserResponseDto(userRepository.saveUser(userMapper.mapToUser(user)));
         }
@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(Long userId) {
-        log.info("Получен запрос на удаление данных пользователя {}",userId);
+        log.info("Получен запрос на удаление данных пользователя {}", userId);
         if (isUserRegistered(userId)) {
             userRepository.delete(userId);
             return;

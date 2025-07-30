@@ -19,7 +19,7 @@ public class ItemRepositoryImpl {
     }
 
     public List<Item> getItemsUser(Long userId) {
-        return items.stream().filter(item->item.getUserId().equals(userId)).toList();
+        return items.stream().filter(item -> item.getUserId().equals(userId)).toList();
     }
 
     public Optional<Item> getItemId(Long itemId) {

@@ -40,8 +40,7 @@ public class ItemController {
 
     // Просмотр информации о конкретной вещи по её идентификатору
     @GetMapping("/{itemId}")
-    public ItemResponseDto findItemId(@RequestHeader("X-Sharer-User-Id") String userId,
-                                      @PathVariable Long itemId) {
+    public ItemResponseDto findItemId(@RequestHeader("X-Sharer-User-Id") String userId, @PathVariable Long itemId) {
         return itemService.findItemId(userId, itemId);
     }
 
@@ -53,8 +52,7 @@ public class ItemController {
     }
 
     @DeleteMapping("/{itemId}")
-    public void deleteItem(@RequestHeader("X-Sharer-User-Id") String userId,
-                           @PathVariable(name="itemId") Long itemId) {
+    public void deleteItem(@RequestHeader("X-Sharer-User-Id") String userId, @PathVariable(name="itemId") Long itemId) {
         itemService.deleteItem(userId, itemId);
     }
 }

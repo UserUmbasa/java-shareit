@@ -19,9 +19,7 @@ public class UserRepositoryImpl {
     }
 
     public Optional<User> findUserById(Long userId) {
-        return users.stream()
-                .filter(user -> user.getId().equals(userId))
-                .findFirst();
+        return users.stream().filter(user -> user.getId().equals(userId)).findFirst();
     }
 
     public void delete(Long userId) {
@@ -29,8 +27,6 @@ public class UserRepositoryImpl {
     }
 
     public Optional<User> findUserByEmail(String email) {
-        return users.stream()
-                .filter(user -> user.getEmail().equals(email))
-                .findFirst();
+        return users.stream().filter(user -> user.getEmail().equals(email)).findFirst();
     }
 }
