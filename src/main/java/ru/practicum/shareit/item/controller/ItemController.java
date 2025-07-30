@@ -52,7 +52,7 @@ public class ItemController {
     }
 
     @DeleteMapping("/{itemId}")
-    public void deleteItem(@RequestHeader("X-Sharer-User-Id") String userId, @PathVariable(name="itemId") Long itemId) {
+    public void deleteItem(@RequestHeader("X-Sharer-User-Id") String userId, @PathVariable Long itemId) {
         itemService.deleteItem(userId, itemId);
     }
 }
