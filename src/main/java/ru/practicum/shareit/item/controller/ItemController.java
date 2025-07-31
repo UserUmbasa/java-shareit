@@ -29,7 +29,6 @@ public class ItemController {
         return result;
     }
 
-    // Редактирование вещи
     @PatchMapping("/{itemId}")
     public ItemResponseDto updateItem(@RequestHeader(value = "X-Sharer-User-Id", required = false) String userId,
                                      @PathVariable Long itemId,
@@ -40,7 +39,6 @@ public class ItemController {
         return result;
     }
 
-    // Просмотр владельцем списка всех его вещей с указанием названия и описания для каждой из них
     @GetMapping
     public List<ItemResponseDto> findItemsUser(@RequestHeader("X-Sharer-User-Id") String userId) {
         log.info("Получен запрос на получение всех вещей пользователя {}", userId);
@@ -49,7 +47,6 @@ public class ItemController {
         return result;
     }
 
-    // Просмотр информации о конкретной вещи по её идентификатору
     @GetMapping("/{itemId}")
     public ItemResponseDto findItemId(@RequestHeader("X-Sharer-User-Id") String userId, @PathVariable Long itemId) {
         log.info("Получен запрос на получение вещи itemId:{}", itemId);
@@ -58,7 +55,6 @@ public class ItemController {
         return result;
     }
 
-    // Поиск вещи потенциальным арендатором.
     @GetMapping("/search")
     public List<ItemResponseDto> findSearchItems(@RequestHeader("X-Sharer-User-Id") String userId,
                                                 @RequestParam(name = "text", required = false) String text) {

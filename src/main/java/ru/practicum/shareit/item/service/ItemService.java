@@ -16,5 +16,4 @@ public interface ItemService {
     List<ItemResponseDto> findSearchItems(String userId, String text);
 
     void deleteItem(String userId, Long itemId);
-
 }

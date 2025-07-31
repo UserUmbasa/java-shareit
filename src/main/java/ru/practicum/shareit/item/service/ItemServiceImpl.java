@@ -90,11 +90,11 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemResponseDto> findSearchItems(String userId, String text) {
         try {
-            List<ItemResponseDto> result = itemRepository.getItemsUser(Long.parseLong(userId)).stream()
-                    .filter(item -> Boolean.TRUE.equals(item.getAvailable())).map(itemMapper::mapToItemResponseDto).toList();
-            return result.stream().filter(item -> {
-                return item.getDescription().toLowerCase().contains(text.toLowerCase()) || item.getName().toLowerCase().contains(text.toLowerCase());
-            }).toList();
+            if (!userService.isUserRegistered(Long.parseLong(userId))) {
+                throw new NotFoundException("такого пользователя нет");
+            }
+            return itemRepository.findSearchItems(Long.parseLong(userId), text).stream()
+                    .map(itemMapper::mapToItemResponseDto).toList();
         } catch (NumberFormatException e) {
             throw new ValidationException("не валидный Id");
         }
@@ -102,6 +102,12 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public void deleteItem(String userId, Long itemId) {
-        // в следующем обновлении - если выкинуть вещи, можно стать вечным
+        try {
+            if (userService.isUserRegistered(Long.parseLong(userId))) {
+                itemRepository.delete(itemId);
+            }
+        } catch (NumberFormatException e) {
+            throw new ValidationException("не валидный Id");
+        }
     }
 }
