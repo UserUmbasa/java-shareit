@@ -144,7 +144,7 @@ public class ItemServiceImpl implements ItemService {
             Item item = itemTRepository.findById(itemId)
                     .orElseThrow(() -> new IllegalStateException("такой вещи нет"));
             User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("такого пользователя нет"));
-            Booking booking = bookingRepository.findByBookerIdAndItemId(id, itemId );
+            Booking booking = bookingRepository.findByBookerIdAndItemId(id, itemId);
             if (!booking.getStatus().equals(BookingState.APPROVED) || LocalDateTime.now().isBefore(booking.getEnd())) {
                 throw new ValidationException("аренда не найдена");
             }

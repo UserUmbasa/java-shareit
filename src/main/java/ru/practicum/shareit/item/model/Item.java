@@ -13,7 +13,7 @@ import lombok.Data;
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
     private String name;
     private String description;
     private Boolean available;
