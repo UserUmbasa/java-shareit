@@ -22,7 +22,7 @@ public class UserController {
     @PostMapping
     public UserResponseDto addUser(@Validated(Marker.OnCreate.class) @RequestBody UserRequestDto user) {
         log.info("Запрос ({}): на добавление пользователя", user);
-        UserResponseDto result = userService.addUser(user);
+        UserResponseDto result = userService.saveUser(user);
         printServerResponse(result);
         return result;
     }
