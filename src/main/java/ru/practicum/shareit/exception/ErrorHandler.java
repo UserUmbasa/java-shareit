@@ -29,7 +29,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponseTemplate handleInternalError(final ExceptionServer e) {
+    public ErrorResponseTemplate handleInternalError(final Throwable e) {
         return new ErrorResponseTemplate(e.getMessage());
     }
 }

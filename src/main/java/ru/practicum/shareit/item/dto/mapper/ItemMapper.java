@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.dto.mapper;
 
 import org.mapstruct.Mapper;
+import ru.practicum.shareit.item.dto.CommentResponseDto;
 import ru.practicum.shareit.item.dto.ItemCommentResponseDto;
 import ru.practicum.shareit.item.dto.ItemRequestDto;
 import ru.practicum.shareit.item.dto.ItemResponseDto;
@@ -17,5 +18,7 @@ public abstract class ItemMapper {
     public abstract ItemResponseDto mapToItemResponseDto(Item item);
 
     public abstract ItemCommentResponseDto mapToItemCommentResponseDto(Item item, List<Comment> comments);
+
+    public abstract CommentResponseDto mapToCommentResponseDto(Comment comment);
 
 }

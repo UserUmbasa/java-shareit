@@ -14,4 +14,5 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             "AND i.available = true " +
             "AND (LOWER(i.name) LIKE %:searchTerm% OR LOWER(i.description) LIKE %:searchTerm%)")
     List<Item> findByUserIdAndSearchTermAndAvailableTrue(@Param("userId") Long userId, @Param("searchTerm") String searchTerm);
+
 }

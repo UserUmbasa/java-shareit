@@ -10,9 +10,9 @@ import java.time.LocalDateTime;
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    String authorName;
-    LocalDateTime created;
+    private Long id;
+    private String authorName;
+    private LocalDateTime created;
     @ManyToOne
     @JoinColumn(name = "item_id")
     private Item item;

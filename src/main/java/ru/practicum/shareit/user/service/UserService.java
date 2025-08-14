@@ -4,7 +4,7 @@ import ru.practicum.shareit.user.dto.UserRequestDto;
 import ru.practicum.shareit.user.dto.UserResponseDto;
 
 public interface UserService {
-    public UserResponseDto saveUser(UserRequestDto user);
+    UserResponseDto saveUser(UserRequestDto user);
 
     UserResponseDto findUser(Long id);
 

@@ -1,8 +1,9 @@
 package ru.practicum.shareit.item.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.storage.BookingRepository;
@@ -11,6 +12,7 @@ import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemCommentResponseDto;
 import ru.practicum.shareit.item.dto.ItemRequestDto;
 import ru.practicum.shareit.item.dto.ItemResponseDto;
+import ru.practicum.shareit.item.dto.CommentResponseDto;
 import ru.practicum.shareit.item.dto.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
@@ -21,22 +23,21 @@ import ru.practicum.shareit.user.storage.UserRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
+@Transactional(readOnly=true)
 public class ItemServiceImpl implements ItemService {
-    @Autowired
-    private ItemMapper itemMapper;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private ItemRepository itemRepository;
-    @Autowired
-    private CommentRepository commentRepository;
-    @Autowired
-    private BookingRepository bookingRepository;
+    private final ItemMapper itemMapper;
+    private final UserRepository userRepository;
+    private final ItemRepository itemRepository;
+    private final CommentRepository commentRepository;
+    private final BookingRepository bookingRepository;
 
     @Override
+    @Transactional
     public ItemResponseDto addItem(String ownerId, ItemRequestDto item) {
         try {
             Long id = Long.parseLong(ownerId);
@@ -52,6 +53,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public ItemResponseDto updateItem(String userId, Long itemId, ItemRequestDto item) {
         try {
             if (!userRepository.existsById(Long.parseLong(userId))) {
@@ -80,9 +82,15 @@ public class ItemServiceImpl implements ItemService {
         try {
             List<ItemCommentResponseDto> result = new ArrayList<>();
             List<Item> items = itemRepository.findItemsByOwnerId(Long.parseLong(userId));
+            List<Long> itemIds = items.stream().map(Item::getId).collect(Collectors.toList());
+            List<Comment> comments = commentRepository.findByItemIdIn(itemIds);
+
             for (Item item : items) {
-                ItemCommentResponseDto itemCommentResponseDto = findItemId(userId, item.getId());
-                result.add(itemCommentResponseDto);
+                List<Comment> itemComments = comments.stream()
+                        .filter(comment -> comment.getItem().getId().equals(item.getId()))
+                        .collect(Collectors.toList());
+                ItemCommentResponseDto dto = itemMapper.mapToItemCommentResponseDto(item, itemComments);
+                result.add(dto);
             }
             return result;
         } catch (NumberFormatException e) {
@@ -126,6 +134,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public void deleteItem(String userId, Long itemId) {
         try {
             if (userRepository.existsById(Long.parseLong(userId))) {
@@ -138,7 +147,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Comment addItemComment(String userId, Long itemId, Comment comment) {
+    @Transactional
+    public CommentResponseDto addItemComment(String userId, Long itemId, Comment comment) {
         try {
             Long id = Long.parseLong(userId);
             Item item = itemRepository.findById(itemId)
@@ -151,7 +161,7 @@ public class ItemServiceImpl implements ItemService {
             comment.setItem(item);
             comment.setAuthorName(user.getName());
             comment.setCreated(LocalDateTime.now());
-            return commentRepository.save(comment);
+            return itemMapper.mapToCommentResponseDto(commentRepository.save(comment));
         } catch (NumberFormatException e) {
             throw new ValidationException("не валидный Id");
         }

@@ -1,6 +1,6 @@
 package ru.practicum.shareit.booking.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
@@ -21,18 +21,16 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@Transactional(readOnly=true)
 public class BookingServiceImpl implements BookingService {
-    @Autowired
-    private BookingMapper bookingMapper;
-    @Autowired
-    private BookingRepository bookingRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private ItemRepository itemRepository;
+    private final BookingMapper bookingMapper;
+    private final BookingRepository bookingRepository;
+    private final UserRepository userRepository;
+    private final ItemRepository itemRepository;
 
-    @Transactional
     @Override
+    @Transactional
     public BookingResponseDto addBooking(String userId, BookingRequestDto booking) {
         try {
             Item item = itemRepository.findById(booking.getItemId()).orElseThrow(() -> new NotFoundException("такого айди нет"));
@@ -48,6 +46,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public BookingResponseDto updateBookingApproval(String userId, Long bookingId, boolean approved) {
         try {
             Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new NotFoundException("такого айди нет"));
