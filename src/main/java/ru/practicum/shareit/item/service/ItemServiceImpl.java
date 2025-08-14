@@ -30,7 +30,7 @@ public class ItemServiceImpl implements ItemService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private ItemRepository itemTRepository;
+    private ItemRepository itemRepository;
     @Autowired
     private CommentRepository commentRepository;
     @Autowired
@@ -44,7 +44,7 @@ public class ItemServiceImpl implements ItemService {
                 throw new NotFoundException("такого пользователя нет");
             }
             item.setOwnerId(id);
-            Item result = itemTRepository.save(itemMapper.mapToItem(item));
+            Item result = itemRepository.save(itemMapper.mapToItem(item));
             return itemMapper.mapToItemResponseDto(result);
         } catch (NumberFormatException e) {
             throw new ValidationException("не валидный Id");
@@ -57,7 +57,7 @@ public class ItemServiceImpl implements ItemService {
             if (!userRepository.existsById(Long.parseLong(userId))) {
                 throw new NotFoundException("такого пользователя нет");
             }
-            Item result = itemTRepository.findById(itemId).orElseThrow(() -> new NotFoundException("такого айди нет"));
+            Item result = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("такого айди нет"));
             if (result.getOwnerId().equals(Long.parseLong(userId))) {
                 if (item.getAvailable() != null) {
                     result.setAvailable(item.getAvailable());
@@ -69,7 +69,7 @@ public class ItemServiceImpl implements ItemService {
                     result.setDescription(item.getDescription());
                 }
             }
-            return itemMapper.mapToItemResponseDto(itemTRepository.save(result));
+            return itemMapper.mapToItemResponseDto(itemRepository.save(result));
         } catch (NumberFormatException e) {
             throw new ValidationException("не валидный Id");
         }
@@ -79,7 +79,7 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemCommentResponseDto> findItemsUser(String userId) {
         try {
             List<ItemCommentResponseDto> result = new ArrayList<>();
-            List<Item> items = itemTRepository.findItemsByOwnerId(Long.parseLong(userId));
+            List<Item> items = itemRepository.findItemsByOwnerId(Long.parseLong(userId));
             for (Item item : items) {
                 ItemCommentResponseDto itemCommentResponseDto = findItemId(userId, item.getId());
                 result.add(itemCommentResponseDto);
@@ -97,7 +97,7 @@ public class ItemServiceImpl implements ItemService {
             if (!userRepository.existsById(id)) {
                 throw new NotFoundException("такого пользователя нет");
             }
-            Item result = itemTRepository.findById(itemId).orElseThrow(() -> new NotFoundException("такого айди нет"));
+            Item result = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("такого айди нет"));
             List<Comment> comments = commentRepository.findAllByItem_Id(itemId);
             ItemCommentResponseDto itemComment = itemMapper.mapToItemCommentResponseDto(result, comments);
 
@@ -118,7 +118,7 @@ public class ItemServiceImpl implements ItemService {
             if (!userRepository.existsById(Long.parseLong(userId))) {
                 throw new NotFoundException("такого пользователя нет");
             }
-            List<Item> result = itemTRepository.findByUserIdAndSearchTermAndAvailableTrue(Long.parseLong(userId), text.toLowerCase());
+            List<Item> result = itemRepository.findByUserIdAndSearchTermAndAvailableTrue(Long.parseLong(userId), text.toLowerCase());
             return result.stream().map(itemMapper::mapToItemResponseDto).toList();
         } catch (NumberFormatException e) {
             throw new ValidationException("не валидный Id");
@@ -131,7 +131,7 @@ public class ItemServiceImpl implements ItemService {
             if (userRepository.existsById(Long.parseLong(userId))) {
                 throw new NotFoundException("такого пользователя нет");
             }
-            itemTRepository.deleteById(itemId);
+            itemRepository.deleteById(itemId);
         } catch (NumberFormatException e) {
             throw new ValidationException("не валидный Id");
         }
@@ -141,7 +141,7 @@ public class ItemServiceImpl implements ItemService {
     public Comment addItemComment(String userId, Long itemId, Comment comment) {
         try {
             Long id = Long.parseLong(userId);
-            Item item = itemTRepository.findById(itemId)
+            Item item = itemRepository.findById(itemId)
                     .orElseThrow(() -> new IllegalStateException("такой вещи нет"));
             User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("такого пользователя нет"));
             Booking booking = bookingRepository.findByBookerIdAndItemId(id, itemId);

@@ -19,15 +19,15 @@ import ru.practicum.shareit.user.storage.UserRepository;
 @Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
     @Autowired
-    private final UserRepository repository;
+    private final UserRepository userRepository;
     @Autowired
     private UserMapper userMapper;
 
     @Override
     @Transactional
     public UserResponseDto saveUser(UserRequestDto user) {
-        if (!repository.existsByEmail(user.getEmail())) {
-            User result = repository.save(userMapper.mapToUser(user));
+        if (!userRepository.existsByEmail(user.getEmail())) {
+            User result = userRepository.save(userMapper.mapToUser(user));
             return userMapper.mapToUserResponseDto(result);
         }
         throw new DuplicateException("такой пользователь уже есть");
@@ -35,16 +35,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDto findUser(Long id) {
-        User result = repository.findById(id).orElseThrow(() -> new NotFoundException("такого пользователя нет"));
+        User result = userRepository.findById(id).orElseThrow(() -> new NotFoundException("такого пользователя нет"));
         return userMapper.mapToUserResponseDto(result);
     }
 
     @Override
     @Transactional
     public UserResponseDto update(Long id, UserRequestDto user) {
-        User result = repository.findById(id).orElseThrow(() -> new NotFoundException("такого пользователя нет"));
+        User result = userRepository.findById(id).orElseThrow(() -> new NotFoundException("такого пользователя нет"));
         if (user.getEmail() != null) {
-            if (repository.existsByEmail(user.getEmail())) {
+            if (userRepository.existsByEmail(user.getEmail())) {
                 throw new DuplicateException("дубликат почты");
             }
             result.setEmail(user.getEmail());
@@ -58,9 +58,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void delete(Long userId) {
-        if (!repository.existsById(userId)) {
+        if (!userRepository.existsById(userId)) {
             throw new NotFoundException("такого пользователя нет");
         }
-        repository.deleteById(userId);
+        userRepository.deleteById(userId);
     }
 }

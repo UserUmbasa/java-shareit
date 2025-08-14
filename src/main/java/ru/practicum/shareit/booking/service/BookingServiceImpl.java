@@ -25,7 +25,7 @@ public class BookingServiceImpl implements BookingService {
     @Autowired
     private BookingMapper bookingMapper;
     @Autowired
-    private BookingRepository repository;
+    private BookingRepository bookingRepository;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -40,7 +40,7 @@ public class BookingServiceImpl implements BookingService {
                 throw new ExceptionServer("вещь не доступна");
             }
             User user = userRepository.findById(Long.parseLong(userId)).orElseThrow(() -> new NotFoundException("такого айди нет"));
-            Booking savedBooking = repository.save(bookingMapper.mapToBooking(booking, item, user));
+            Booking savedBooking = bookingRepository.save(bookingMapper.mapToBooking(booking, item, user));
             return bookingMapper.mapToBookingResponseDto(savedBooking);
         } catch (NumberFormatException e) {
             throw new ValidationException("не валидный Id");
@@ -50,10 +50,10 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingResponseDto updateBookingApproval(String userId, Long bookingId, boolean approved) {
         try {
-            Booking booking = repository.findById(bookingId).orElseThrow(() -> new NotFoundException("такого айди нет"));
+            Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new NotFoundException("такого айди нет"));
             if (booking.getItem().getOwnerId().equals(Long.parseLong(userId))) {
                 booking.setStatus(approved ? BookingState.APPROVED : BookingState.REJECTED);
-                Booking savedBooking = repository.save(booking);
+                Booking savedBooking = bookingRepository.save(booking);
                 return bookingMapper.mapToBookingResponseDto(savedBooking);
             }
             throw new ValidationException("менять статус может только владелец");
@@ -66,7 +66,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingResponseDto findBookingId(String userId, Long bookingId) {
         try {
             Long id = Long.parseLong(userId);
-            Booking booking = repository.findById(bookingId).orElseThrow(() -> new NotFoundException("такого айди нет"));
+            Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new NotFoundException("такого айди нет"));
             if (booking.getBooker().getId().equals(id) || booking.getItem().getOwnerId().equals(id)) {
                 return bookingMapper.mapToBookingResponseDto(booking);
             }
@@ -81,10 +81,10 @@ public class BookingServiceImpl implements BookingService {
         try {
             Long id = Long.parseLong(userId);
             List<Booking> result = switch (state) {
-                case ALL -> repository.findAllByBookerIdOrderByStartDesc(id);
-                case WAITING, APPROVED, REJECTED -> repository.findAllByBookerIdAndStatusOrderByStartDesc(id, state);
-                case FUTURE -> repository.findFutureBookingsByBookerId(LocalDateTime.now(), id);
-                case PAST -> repository.findPastBookingsByBookerId(LocalDateTime.now(), id);
+                case ALL -> bookingRepository.findAllByBookerIdOrderByStartDesc(id);
+                case WAITING, APPROVED, REJECTED -> bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(id, state);
+                case FUTURE -> bookingRepository.findFutureBookingsByBookerId(LocalDateTime.now(), id);
+                case PAST -> bookingRepository.findPastBookingsByBookerId(LocalDateTime.now(), id);
                 default -> throw new ValidationException("не валидный state");
             };
             return result.stream().map(bookingMapper::mapToBookingResponseDto).toList();
@@ -98,10 +98,10 @@ public class BookingServiceImpl implements BookingService {
         try {
             Long ownerId = Long.parseLong(userId);
             List<Booking> result = switch (state) {
-                case ALL -> repository.findAllByOwnerIdOrderByStartDesc(ownerId);
-                case WAITING, APPROVED, REJECTED -> repository.findAllOwnerIdAndStatusOrderByStartDesc(ownerId, state);
-                case FUTURE -> repository.findFutureBookingsByOwnerId(LocalDateTime.now(), ownerId);
-                case PAST -> repository.findPastBookingsByOwnerId(LocalDateTime.now(), ownerId);
+                case ALL -> bookingRepository.findAllByOwnerIdOrderByStartDesc(ownerId);
+                case WAITING, APPROVED, REJECTED -> bookingRepository.findAllOwnerIdAndStatusOrderByStartDesc(ownerId, state);
+                case FUTURE -> bookingRepository.findFutureBookingsByOwnerId(LocalDateTime.now(), ownerId);
+                case PAST -> bookingRepository.findPastBookingsByOwnerId(LocalDateTime.now(), ownerId);
                 default -> throw new ValidationException("не валидный state");
             };
             if (result.isEmpty()) {
