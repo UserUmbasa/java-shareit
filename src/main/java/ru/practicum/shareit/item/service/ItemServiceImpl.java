@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly=true)
+@Transactional(readOnly = true)
 public class ItemServiceImpl implements ItemService {
     private final ItemMapper itemMapper;
     private final UserRepository userRepository;
