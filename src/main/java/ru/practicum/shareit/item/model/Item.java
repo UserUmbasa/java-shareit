@@ -14,6 +14,7 @@ public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private Long requestId;
     private String name;
     private String description;
     private Boolean available;
