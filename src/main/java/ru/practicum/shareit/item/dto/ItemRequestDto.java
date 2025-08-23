@@ -8,6 +8,7 @@ import ru.practicum.shareit.user.validator.Marker;
 @Data
 public class ItemRequestDto {
     private Long ownerId;
+    private Long requestId;
     @NotBlank(groups = Marker.OnCreate.class, message = "name не должен содержать пустым или null")
     private String name;
     @NotBlank(groups = Marker.OnCreate.class, message = "description не должен содержать пустым или null")
