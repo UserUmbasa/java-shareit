@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.validation.Marker;
+import org.springframework.cache.annotation.Cacheable;
 
 @RestController
 @RequestMapping("/users")
@@ -26,6 +27,7 @@ public class UserGatewayController {
                 .toEntity(Object.class);
     }
 
+    @Cacheable(value = "userCache", key = "#userId")
     @GetMapping("/{userId}")
     public ResponseEntity<Object> findUser(@PathVariable Long userId) {
         return restClient.get()

@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.controller;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -57,6 +58,7 @@ public class ItemGatewayController {
                 .toEntity(Object.class);
     }
 
+    @Cacheable(value = "itemCache", key = "#userId")
     @GetMapping
     public ResponseEntity<Object> findItemsUser(@RequestHeader(HEADER) String userId) {
         return restClient.get()
@@ -65,6 +67,7 @@ public class ItemGatewayController {
                 .toEntity(Object.class);
     }
 
+    @Cacheable(value = "itemCache", key = "#userId + '_' + #itemId")
     @GetMapping("/{itemId}")
     public ResponseEntity<Object> findItemId(@RequestHeader(HEADER) String userId, @PathVariable Long itemId) {
         return restClient.get()
@@ -76,6 +79,7 @@ public class ItemGatewayController {
                 .toEntity(Object.class);
     }
 
+    @Cacheable(value = "itemSearchCache", key = "#userId + '_' + (#text != null ? #text : '')")
     @GetMapping("/search")
     public ResponseEntity<Object> findSearchItems(@RequestHeader(HEADER) String userId,
                                                   @RequestParam(name = "text", required = false) String text) {

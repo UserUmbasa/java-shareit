@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.controller;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +40,7 @@ public class BookingGatewayController {
                 .toEntity(Object.class);
     }
 
+    @Cacheable(value = "bookingCache", key = "#userId + '_' + #bookingId")
     @GetMapping(BOOKING_ID)
     public ResponseEntity<Object> findBookingId(@RequestHeader(HEADER) String userId, @PathVariable Long bookingId) {
         return restClient.get()
@@ -48,6 +50,7 @@ public class BookingGatewayController {
                 .toEntity(Object.class);
     }
 
+    @Cacheable(value = "bookingCache", key = "#userId + '_' + (#state != null ? #state : 'all')")
     @GetMapping()
     public ResponseEntity<Object> findBookingsAllById(@RequestHeader(HEADER) String userId,
                                                       @RequestParam(name = "state", required = false) String state) {
@@ -60,6 +63,7 @@ public class BookingGatewayController {
                 .toEntity(Object.class);
     }
 
+    @Cacheable(value = "bookingOwnerCache", key = "#ownerId + '_' + (#state != null ? #state : 'all')")
     @GetMapping("/owner")
     public ResponseEntity<Object> findBookingsByItemsAllById(@RequestHeader(HEADER) String ownerId,
                                                              @RequestParam(name = "state", required = false) String state) {

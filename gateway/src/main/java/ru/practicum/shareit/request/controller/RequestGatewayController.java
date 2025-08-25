@@ -1,6 +1,7 @@
 package ru.practicum.shareit.request.controller;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,7 @@ public class RequestGatewayController {
                 .toEntity(Object.class);
     }
 
+    @Cacheable(value = "requestCache", key = "#userId")
     @GetMapping()
     public ResponseEntity<Object> findRequestsByUser(@RequestHeader(value = HEADER, required = false) String userId) {
         return restClient.get()
@@ -37,6 +39,7 @@ public class RequestGatewayController {
                 .toEntity(Object.class);
     }
 
+    @Cacheable(value = "requestAllCache", key = "#userId")
     @GetMapping("/all")
     public ResponseEntity<Object> findRequestsByUsers(@RequestHeader(value = HEADER, required = false) String userId) {
         return restClient.get()
@@ -48,6 +51,7 @@ public class RequestGatewayController {
                 .toEntity(Object.class);
     }
 
+    @Cacheable(value = "requestCache", key = "#userId + '_' + #requestId")
     @GetMapping("/{requestId}")
     public ResponseEntity<Object> findRequestId(@RequestHeader(HEADER) String userId, @PathVariable Long requestId) {
         return restClient.get()
