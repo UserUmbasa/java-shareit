@@ -1,7 +1,9 @@
 package ru.practicum.shareit.request.controller;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,10 @@ public class RequestGatewayController {
         this.restClient = restClient;
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "requestCache", key = "#userId"),
+            @CacheEvict(value = "requestAllCache", key = "#userId")
+    })
     @PostMapping
     public ResponseEntity<Object> addRequest(@RequestHeader(value = HEADER, required = false) String userId,
                                              @Validated(Marker.OnCreate.class) @RequestBody RequestDto request) {
@@ -51,7 +57,6 @@ public class RequestGatewayController {
                 .toEntity(Object.class);
     }
 
-    @Cacheable(value = "requestCache", key = "#userId + '_' + #requestId")
     @GetMapping("/{requestId}")
     public ResponseEntity<Object> findRequestId(@RequestHeader(HEADER) String userId, @PathVariable Long requestId) {
         return restClient.get()

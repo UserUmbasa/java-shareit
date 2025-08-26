@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.controller;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -27,6 +28,7 @@ public class BookingGatewayController {
         return restClient.post().header(HEADER, userId).body(book).retrieve().toEntity(Object.class);
     }
 
+    @CacheEvict(value = {"bookingCache", "bookingOwnerCache"}, allEntries = true)
     @PatchMapping(BOOKING_ID)
     public ResponseEntity<Object> updateBookingApproval(@RequestHeader(value = HEADER, required = false) String userId,
                                                         @PathVariable Long bookingId, @RequestParam boolean approved) {

@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user.controller;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +37,7 @@ public class UserGatewayController {
                 .toEntity(Object.class);
     }
 
+    @CacheEvict(value = "userCache", key = "#userId")
     @PatchMapping("/{userId}")
     public ResponseEntity<Object> updateUser(@PathVariable Long userId,
                                              @Validated(Marker.OnUpdate.class) @RequestBody UserDto user) {
@@ -46,6 +48,7 @@ public class UserGatewayController {
                 .toEntity(Object.class);
     }
 
+    @CacheEvict(value = "userCache", key = "#userId")
     @DeleteMapping("/{userId}")
     public ResponseEntity<Object> delete(@PathVariable Long userId) {
         return restClient.delete()

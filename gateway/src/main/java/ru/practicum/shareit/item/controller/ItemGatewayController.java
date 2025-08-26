@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.controller;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -45,6 +46,7 @@ public class ItemGatewayController {
                 .toEntity(Object.class);
     }
 
+    @CacheEvict(value = {"itemCache", "itemSearchCache"}, allEntries = true)
     @PatchMapping("/{itemId}")
     public ResponseEntity<Object> updateItem(@RequestHeader(value = HEADER, required = false) String userId,
                                              @PathVariable Long itemId, @RequestBody ItemDto item) {
@@ -93,6 +95,7 @@ public class ItemGatewayController {
                 .toEntity(Object.class);
     }
 
+    @CacheEvict(value = {"itemCache", "itemSearchCache"}, allEntries = true)
     @DeleteMapping("/{itemId}")
     public ResponseEntity<Object> deleteItem(@RequestHeader(HEADER) String userId, @PathVariable Long itemId) {
         return restClient.delete()
