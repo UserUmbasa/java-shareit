@@ -22,7 +22,6 @@ public class GlobalExceptionHandler {
                     .readTree(e.getResponseBodyAsString())
                     .path("error")
                     .asText();
-            //log.error("Произошла ошибка при выполнении запроса: {} статус {}", errorMessage, e.getStatusCode());
             return ResponseEntity.status(e.getStatusCode())
                     .body(Map.of("error", errorMessage));
         } catch (Exception ex) {
